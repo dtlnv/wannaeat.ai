@@ -1,4 +1,11 @@
 import { WandSparkles } from "lucide-react";
+import { useEffect } from "react";
+import {
+	type Control,
+	type UseFormRegister,
+	useFieldArray,
+} from "react-hook-form";
+import type { RecipeFormData } from "../types";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -13,9 +20,23 @@ import { Textarea } from "./ui/textarea";
 
 type PreviewFormProps = {
 	selectedIngredients: string[];
+	control: Control<RecipeFormData>;
+	register: UseFormRegister<RecipeFormData>;
+	onSubmit: (e?: React.BaseSyntheticEvent) => void;
 };
 
-export function PreviewForm({ selectedIngredients }: PreviewFormProps) {
+export function PreviewForm({
+	selectedIngredients,
+	control,
+	register,
+	onSubmit,
+}: PreviewFormProps) {
+	const { fields, replace } = useFieldArray({ control, name: "ingredients" });
+
+	useEffect(() => {
+		replace(selectedIngredients.map((name) => ({ name, note: "" })));
+	}, [selectedIngredients, replace]);
+
 	if (selectedIngredients.length === 0) {
 		return (
 			<section className="mb-10 pt-8">
@@ -34,14 +55,14 @@ export function PreviewForm({ selectedIngredients }: PreviewFormProps) {
 	}
 
 	return (
-		<>
+		<form onSubmit={onSubmit}>
 			<section className="mb-10 pt-8">
 				<div className="mb-4 flex items-baseline justify-between">
 					<h2 className="text-sm font-medium uppercase tracking-[0.14em] text-muted-foreground">
 						Selected
 					</h2>
 					<span className="font-mono text-xs text-muted-foreground">
-						{selectedIngredients.length} items
+						{fields.length} items
 					</span>
 				</div>
 				<Table>
@@ -52,13 +73,14 @@ export function PreviewForm({ selectedIngredients }: PreviewFormProps) {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{selectedIngredients.map((ingredient) => (
-							<TableRow key={ingredient}>
+						{fields.map((field, index) => (
+							<TableRow key={field.id}>
 								<TableCell className="font-mono text-sm uppercase tracking-wide">
-									{ingredient}
+									{field.name}
 								</TableCell>
 								<TableCell>
 									<Input
+										{...register(`ingredients.${index}.note`)}
 										placeholder="Enter note, e.g. '0.5 kg', 'two pieces', 'chopped', etc."
 										className="h-8 rounded-none border-0 border-b border-dashed border-border px-0 shadow-none focus-visible:ring-0"
 									/>
@@ -70,22 +92,28 @@ export function PreviewForm({ selectedIngredients }: PreviewFormProps) {
 			</section>
 			<section className="mb-10 border-t border-border pt-8 flex flex-col gap-4">
 				<label
-					htmlFor="comment"
+					htmlFor="message"
 					className="block text-sm font-medium uppercase tracking-[0.14em] text-muted-foreground"
 				>
 					Anything else?
 				</label>
 				<Textarea
-					id="comment"
+					id="message"
+					{...register("message")}
 					placeholder="No oven, vegetarian, cooking for two…"
 					className="resize-none focus-visible:ring-0"
 					rows={3}
 				/>
-				<Button size="lg" className="gap-2 w-fit" variant="outline">
+				<Button
+					size="lg"
+					type="submit"
+					className="gap-2 w-fit"
+					variant="outline"
+				>
 					<WandSparkles className="h-4 w-4" />
 					Generate Recipe
 				</Button>
 			</section>
-		</>
+		</form>
 	);
 }
