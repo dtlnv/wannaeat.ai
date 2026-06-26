@@ -1,0 +1,7 @@
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>App favicon</title>
+  <rect width="64" height="64" rx="15" fill="#0A0A0A"></rect>
+  <g transform="translate(16 16)">
+    <circle cx="9" cy="9" r="6" fill="#FAFAFA"></circle><rect x="17" y="3" width="12" height="12" rx="4" fill="#4F9D7E"></rect><rect x="3" y="17" width="12" height="12" rx="4" fill="#FAFAFA"></rect><circle cx="23" cy="23" r="6" fill="#FAFAFA"></circle>
+  </g>
+</svg>
