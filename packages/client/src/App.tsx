@@ -4,6 +4,7 @@ import { AppIntro } from "./components/app-intro";
 import { Header } from "./components/header";
 import { IngredientsSelection } from "./components/ingredients-selection";
 import { PreviewForm } from "./components/preview-form";
+import { RecipeContainer } from "./components/recipe-container";
 import { RecipeLoader } from "./components/recipe-loader";
 import type { RecipeFormData } from "./types";
 
@@ -13,18 +14,36 @@ function App() {
 		defaultValues: { ingredients: [], message: "" },
 	});
 	const [loading, setLoading] = useState(false);
+	const [recipe, setRecipe] = useState<string | null>(null);
 
-	const onSubmit = (data: RecipeFormData) => {
-		console.log(data);
-		// TODO: Implement recipe generation logic here
+	const onSubmit = async (data: RecipeFormData) => {
 		setLoading(true);
+
+		const response = await fetch("/api/recipe", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		});
+
+		if (!response.ok) {
+			console.error("Failed to create recipe");
+		} else {
+			const result = await response.json();
+			result.message && setRecipe(result.message);
+		}
+
+		setLoading(false);
 	};
 
 	return (
 		<div className="min-h-svh bg-background text-foreground">
 			<div className="mx-auto w-full max-w-[76rem] px-4 py-8 sm:px-6 sm:py-12 md:px-6 md:py-16">
 				<Header />
-				{loading ? (
+				{recipe ? (
+					<RecipeContainer message={recipe} onReset={() => setRecipe(null)} />
+				) : loading ? (
 					<div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-[2px] cursor-wait">
 						<RecipeLoader />
 					</div>

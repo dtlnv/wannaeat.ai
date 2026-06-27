@@ -1,20 +1,11 @@
-import dotenv from "dotenv";
 import express from "express";
-
-dotenv.config();
+import recipeRouter from "./routes/recipe";
 
 const app = express();
 
-app.get("/", (req, res) => {
-	res.send("Hello, World!");
-});
+app.use(express.json());
 
-app.get("/api/hello", (req, res) => {
-	res.json({ message: "what a beautiful day!" });
-
-	// error example
-	// res.status(500).json({ error: "Internal Server Error" });
-});
+app.use("/api", recipeRouter);
 
 const PORT = process.env.PORT || 3000;
 
