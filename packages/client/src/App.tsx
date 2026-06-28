@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AppIntro } from "./components/app-intro";
+import { ErrorContainer } from "./components/error-container";
 import { Header } from "./components/header";
 import { IngredientsSelection } from "./components/ingredients-selection";
 import { PreviewForm } from "./components/preview-form";
@@ -15,6 +16,7 @@ function App() {
 	});
 	const [loading, setLoading] = useState(false);
 	const [recipe, setRecipe] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
 	const onSubmit = async (data: RecipeFormData) => {
 		setLoading(true);
@@ -28,7 +30,8 @@ function App() {
 		});
 
 		if (!response.ok) {
-			console.error("Failed to create recipe");
+			const result = await response.json();
+			result.error && setError(`${response.statusText}: ${result.error}`);
 		} else {
 			const result = await response.json();
 			result.message && setRecipe(result.message);
@@ -41,7 +44,9 @@ function App() {
 		<div className="min-h-svh bg-background text-foreground">
 			<div className="mx-auto w-full max-w-[76rem] px-4 py-8 sm:px-6 sm:py-12 md:px-6 md:py-16">
 				<Header />
-				{recipe ? (
+				{error ? (
+					<ErrorContainer message={error} onReset={() => setError(null)} />
+				) : recipe ? (
 					<RecipeContainer message={recipe} onReset={() => setRecipe(null)} />
 				) : loading ? (
 					<div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-[2px] cursor-wait">

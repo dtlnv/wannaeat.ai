@@ -1,25 +1,22 @@
-import { ChefHat, RotateCcw } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { CloudAlert, RotateCcw } from "lucide-react";
 import { Button } from "./ui/button";
 
-interface RecipeContainerProps {
+interface ErrorContainerProps {
 	message: string;
 	onReset: () => void;
 }
 
-export function RecipeContainer({ message, onReset }: RecipeContainerProps) {
+export function ErrorContainer({ message, onReset }: ErrorContainerProps) {
 	return (
 		<div className="flex flex-col items-center gap-8">
 			<div className="flex w-full max-w-xl flex-col gap-4 [animation:rise_0.5s_ease-out_backwards]">
 				<div className="flex items-center gap-2 text-muted-foreground/60">
-					<ChefHat className="size-4" strokeWidth={1.5} />
+					<CloudAlert className="size-4" strokeWidth={1.5} />
 					<span className="font-mono text-[10px] uppercase tracking-[0.18em]">
-						Recipe
+						Error
 					</span>
 				</div>
-				<div className="recipe-markdown">
-					<ReactMarkdown>{message}</ReactMarkdown>
-				</div>
+				<p>{message}</p>
 			</div>
 
 			<Button
@@ -29,7 +26,7 @@ export function RecipeContainer({ message, onReset }: RecipeContainerProps) {
 				className="group gap-2 [animation:rise_0.5s_ease-out_0.1s_backwards]"
 			>
 				<RotateCcw className="size-3.5 transition-transform duration-500 group-hover:-rotate-[360deg]" />
-				Start over
+				Try again
 			</Button>
 
 			<style>{`
