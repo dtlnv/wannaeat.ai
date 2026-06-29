@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AppIntro } from "./components/app-intro";
@@ -21,23 +22,22 @@ function App() {
 	const onSubmit = async (data: RecipeFormData) => {
 		setLoading(true);
 
-		const response = await fetch("/api/recipe", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-		});
-
-		if (!response.ok) {
-			const result = await response.json();
-			result.error && setError(`${response.statusText}: ${result.error}`);
-		} else {
-			const result = await response.json();
+		try {
+			const { data: result } = await axios.post<{ message?: string }>(
+				"/api/recipe",
+				data,
+			);
 			result.message && setRecipe(result.message);
+		} catch (err) {
+			if (axios.isAxiosError<{ error?: string }>(err)) {
+				const apiError = err.response?.data?.error ?? err.message;
+				setError(`${err.response?.statusText ?? "Error"}: ${apiError}`);
+			} else {
+				setError("Something went wrong. Please try again.");
+			}
+		} finally {
+			setLoading(false);
 		}
-
-		setLoading(false);
 	};
 
 	return (
