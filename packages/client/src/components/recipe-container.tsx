@@ -31,13 +31,6 @@ export function RecipeContainer({ message, onReset }: RecipeContainerProps) {
 				<RotateCcw className="size-3.5 transition-transform duration-500 group-hover:-rotate-[360deg]" />
 				Start over
 			</Button>
-
-			<style>{`
-				@keyframes rise {
-					from { opacity: 0; transform: translateY(6px); }
-					to { opacity: 1; transform: translateY(0); }
-				}
-			`}</style>
 		</div>
 	);
 }
